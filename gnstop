@@ -1,0 +1,30 @@
+#!/bin/bash
+################################################################################
+#
+# Date  : Apr 2016
+# Auth  : E.Duble
+# Desc. : Reboot a Greennet node.
+
+# GNR : Send an Hard Reset to the STM32L1W (in order to flash it also when in
+#       stop mode).
+################################################################################
+OCD="${GN_OCD:-/usr/bin/openocd}"
+TCL="${GN_TCL:-/usr/lib/greennet-ocd-stlink.tcl}"
+
+if [ ! -f $OCD ]; then
+    echo "Openocd missing on this system. Install it at $OCD." >&2
+    exit 1
+fi
+
+if [ ! -f $TCL ]; then
+    echo "$(basename "$TCL") missing on this system. Install it at $TCL." >&2
+    exit 1
+fi
+
+"$OCD" GNR \
+    -f "$TCL" \
+    -c "init" \
+    -c "targets" \
+    -c "reset halt" \
+    -c "shutdown"
+

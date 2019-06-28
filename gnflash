@@ -1,0 +1,59 @@
+#!/bin/bash
+################################################################################
+#
+# Date  : Jan 2013
+# Auth  : L. Varga
+# Desc. :  Flash an ELF file on a greennet platform.
+
+# In case you want to choose from several GreeNet nodes conected to PC for
+# flashing, include in the greennet-ocd-stlink.tcl after the stlink_pid the
+# stlink_serial #ofnode
+# The number of the node can be seen with lsusb -v with a single node connected
+# to PC # (look for the ST Link device)
+#
+# GNR : Send an Hard Reset to the STM32L1W (in order to flash it also when in
+#       stop mode).
+#
+# Modified for WALT
+# Date  : Feb 2016
+# Auth  : I. Juc
+# Changelog:
+# * hardcoded paths for openocd and greennet-ocd-stlink.tcl
+# * allow image name with or without the ".greennet_tagv2 extension
+# * allow specifying OCD & TCL from environment (Henry-Joseph Audéoud, 2019-06-27)
+################################################################################
+# reg xPSR 0x61000000 make the flash work when this memory is empty
+################################################################################
+
+OCD="${GN_OCD:-/usr/bin/openocd}"
+TCL="${GN_TCL:-/usr/lib/greennet-ocd-stlink.tcl}"
+
+if [ ! -f $OCD ]; then
+    echo "Openocd missing on this system. Install it at $OCD." >&2
+    exit 1
+fi
+
+if [ ! -f $TCL ]; then
+    echo "$(basename "$TCL") missing on this system. Install it at $TCL." >&2
+    exit 1
+fi
+
+if [ -f "$1" ]; then
+    to_flash="$1"
+elif [ -f "$1.greennet_tagv2" ]; then
+    to_flash="$1.greennet_tagv2"
+else
+    echo "Image to flash not found"
+    exit 1
+fi
+
+$OCD GNR \
+    -f "$TCL" \
+    -c "init" \
+    -c "targets" \
+    -c "reset halt" \
+    -c "reg xPSR 0x61000000" \
+    -c "flash write_image erase $to_flash" \
+    -c "verify_image $to_flash" \
+    -c "reset run" \
+    -c "shutdown"
