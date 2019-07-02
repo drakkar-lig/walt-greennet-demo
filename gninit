@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# set appropriate serial parameters
+/bin/stty -F /dev/ttyACM1 460800 raw -brkint -iexten -echo -echoe -echok -echoctl -echoke
+
+# stop the sensor board processor
+# (gnreboot will restart it)
+/usr/bin/gnstop
+

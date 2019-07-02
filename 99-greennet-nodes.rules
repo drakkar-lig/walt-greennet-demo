@@ -1,0 +1,17 @@
+# trying to set udev rules for GN nodes with 
+# the stlink that opens the serial output on
+# /dev/ttyACM1
+
+# thus, the port that is configured is /dev/ttyACM1
+
+# the expected configuration is
+
+
+# speed 460800 baud; line = 0;
+# min = 1; time = 0;
+# -brkint -icrnl -imaxbel
+# -opost
+# -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke
+
+# --------------------
+ATTRS{idVendor}=="0483", ATTRS{manufacturer}=="STMicroelectronics", RUN+="/usr/bin/gninit"
