@@ -1,7 +1,11 @@
 FROM waltplatform/rpi-3-b-plus-default
 
+# OS packages
+RUN apt-get update && apt-get install --no-install-recommends -y at
+
 # WalT
-RUN pip install setuptools wheel && pip install walt-node
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install walt-node
 RUN walt-setup-systemd
 
 # GreenNet

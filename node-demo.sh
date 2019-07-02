@@ -1,13 +1,14 @@
 #!/bin/sh
 
-# Daemon mode by default, deactivated by -d as *first* argument
-if [ "$1" != -d ]; then
-  "$0" -d "$@" &
-  exit 0
-fi
+# Run in background, release ssh command
+# if this script is run by:
+# walt node run <this-node> /root/node-demo.sh
+at now << EOF
 
 # reboot the sensor
 gnreboot
 
 # start forwarding traces to walt
 walt-serial-autolog /dev/ttyACM1
+
+EOF
