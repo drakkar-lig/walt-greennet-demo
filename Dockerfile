@@ -1,7 +1,7 @@
 FROM waltplatform/rpi-3-b-plus-default
 
 # OS packages
-RUN apt-get update && apt-get install --no-install-recommends -y at
+RUN apt-get update && apt-get install --no-install-recommends -y at psmisc
 
 # WalT
 RUN pip install --upgrade pip setuptools wheel
